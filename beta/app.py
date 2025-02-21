@@ -1,12 +1,14 @@
 # app.py
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from home import serve_home
+from admin import serve_admin_panel
 from settings import PORT, HOST
 
 class PortfolioHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         routes = {
-            '/': serve_home
+            '/': serve_home,
+            '/admin': serve_admin_panel
         }
         
         if self.path in routes:

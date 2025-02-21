@@ -16,7 +16,7 @@ def serve_base_html(active_section):
                     <div class="flex justify-between items-center py-4 w-full">
                         <a href="/" class="text-xl font-bold">My Portfolio</a>
                         <div class="flex gap-4">
-                            <a href="/" class="btn btn-ghost {active_section == 'home' and 'btn-active'}">
+                            <a href="/admin" class="btn btn-ghost {active_section == 'home' and 'btn-active'}">
                                 <i class="fa-solid fa-crown mr-2"></i>Admin
                             </a>
                            <button onclick="toggleTheme()" class="btn btn-ghost">
