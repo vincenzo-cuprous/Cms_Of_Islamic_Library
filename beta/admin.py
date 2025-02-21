@@ -65,9 +65,37 @@ def serve_admin_panel():
                                 <span class="font-semibold">Status:</span>
                                 <div class="badge badge-success">Published</div>
                             </div>
+                            <div class="divider my-2"></div>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold">Downloads:</span>
+                                    <span>1,234</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="#" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-download mr-2"></i>Main Download
+                                    </a>
+                                    <a href="#" class="btn btn-sm">
+                                        <i class="fas fa-book-reader mr-2"></i>Preview
+                                    </a>
+                                    <div class="dropdown dropdown-end">
+                                        <label tabindex="0" class="btn btn-sm">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </label>
+                                        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                            <li><a href="#"><i class="fas fa-link mr-2"></i>Alt Source 1</a></li>
+                                            <li><a href="#"><i class="fas fa-link mr-2"></i>Alt Source 2</a></li>
+                                            <li><a href="#" class="text-error"><i class="fas fa-exclamation-triangle mr-2"></i>Report Links</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card-actions justify-end mt-4">
                                 <button class="btn btn-outline btn-sm">
                                     <i class="fas fa-eye mr-2"></i>View Statistics
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="checkLinks(this)">
+                                    <i class="fas fa-link mr-2"></i>Check Links
                                 </button>
                             </div>
                         </div>
@@ -121,6 +149,53 @@ def serve_admin_panel():
                             <span class="label-text">Description</span>
                         </label>
                         <textarea class="textarea textarea-bordered" placeholder="Enter book description"></textarea>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Download URL</span>
+                            <span class="label-text-alt text-info">
+                                <i class="fas fa-circle-info"></i> Direct download link for the book
+                            </span>
+                        </label>
+                        <div class="join w-full">
+                            <input type="url" placeholder="Enter download URL" class="input input-bordered join-item w-full" />
+                            <button class="btn btn-primary join-item" onclick="validateURL(this)">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Preview URL</span>
+                            <span class="label-text-alt text-info">
+                                <i class="fas fa-circle-info"></i> Link to preview/read online
+                            </span>
+                        </label>
+                        <div class="join w-full">
+                            <input type="url" placeholder="Enter preview URL" class="input input-bordered join-item w-full" />
+                            <button class="btn btn-primary join-item" onclick="validateURL(this)">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Alternative Download Sources</span>
+                        </label>
+                        <div id="alt-downloads" class="space-y-2">
+                            <div class="join w-full">
+                                <input type="url" placeholder="Alternative download URL" class="input input-bordered join-item w-full" />
+                                <button class="btn btn-error join-item" onclick="removeAltDownload(this)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline btn-sm mt-2" onclick="addAltDownload()">
+                            <i class="fas fa-plus mr-2"></i>Add Alternative Source
+                        </button>
                     </div>
                     
                     <div class="modal-action">
@@ -186,6 +261,86 @@ def serve_admin_panel():
                     });
                 });
             });
+
+            // URL validation and management
+            function validateURL(button) {
+                const input = button.previousElementSibling;
+                try {
+                    new URL(input.value);
+                    // Add visual feedback
+                    button.innerHTML = '<i class="fas fa-check"></i>';
+                    button.classList.add('btn-success');
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-link"></i>';
+                        button.classList.remove('btn-success');
+                    }, 2000);
+                } catch {
+                    // Add error feedback
+                    button.innerHTML = '<i class="fas fa-xmark"></i>';
+                    button.classList.add('btn-error');
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-link"></i>';
+                        button.classList.remove('btn-error');
+                    }, 2000);
+                }
+            }
+
+            // Alternative download sources management
+            function addAltDownload() {
+                const container = document.getElementById('alt-downloads');
+                const newDownload = document.createElement('div');
+                newDownload.className = 'join w-full';
+                newDownload.innerHTML = `
+                    <input type="url" placeholder="Alternative download URL" class="input input-bordered join-item w-full" />
+                    <button class="btn btn-error join-item" onclick="removeAltDownload(this)">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                `;
+                container.appendChild(newDownload);
+            }
+
+            function removeAltDownload(button) {
+                button.parentElement.remove();
+            }
+
+            // Link checker functionality
+            async function checkLinks(button) {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Checking...';
+                button.disabled = true;
+
+                try {
+                    // Simulate checking links (replace with actual API call)
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Show results in a toast or modal
+                    const toast = document.createElement('div');
+                    toast.className = 'toast toast-end';
+                    toast.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <span>All links are working!</span>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                } catch (error) {
+                    // Handle errors
+                    const toast = document.createElement('div');
+                    toast.className = 'toast toast-end';
+                    toast.innerHTML = `
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Some links might be broken!</span>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
         </script>
     """
     return content
